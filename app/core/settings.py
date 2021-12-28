@@ -45,6 +45,8 @@ INSTALLED_APPS = [
 
     'accounts',
 
+    'barber_booking',
+
 ]
 
 REST_FRAMEWORK = {
