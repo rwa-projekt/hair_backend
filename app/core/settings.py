@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 
     'barber_booking',
 
+    'drf_yasg',
+
 ]
 
 REST_FRAMEWORK = {
