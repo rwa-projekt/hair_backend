@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('hair_styles', views.HairStyleViewSet)
+router.register('orders', views.OrderViewSet)
 
 
 urlpatterns = [

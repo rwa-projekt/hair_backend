@@ -1,8 +1,13 @@
 from django.shortcuts import render
-from rest_framework import views, viewsets, mixins, status
+from django.views import generic
+from rest_framework import generics, views, viewsets, mixins, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, authentication_classes, permission_classes
+from django.db import connection
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 
 
 from .models import *
@@ -33,7 +38,6 @@ class CustomModelViewSet(viewsets.ModelViewSet):
     #     return Response(ser.data)
 
 
-
 class HairStyleViewSet(CustomModelViewSet):
     queryset = HairStyle.objects.filter(is_active=True)
     serializer_class = HairStyleSerializer
@@ -49,3 +53,38 @@ class HairStyleViewSet(CustomModelViewSet):
         res = HairStyleService.set_avatar(pk, request.FILES.getlist('files'))
         return Response(self.get_serializer(self.get_object()).data)
 
+
+class OrderViewSet(
+    viewsets.ModelViewSet
+):
+    queryset = Order.objects.all().prefetch_related('order_items').select_related('client')
+    serializer_class = DetailOrderSerializer
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    # def list(self, request, *args, **kwargs):
+    #     objs = self.get_queryset().filter(**request.GET.dict())
+    #     ser = self.get_serializer(objs, many=True)
+    #     print(request.GET.dict())
+    #     return Response(ser.data, 200)
+
+    def create(self, request, *args, **kwargs):
+        ser = AddOrderSerializer(data = request.data)
+        ser.is_valid(raise_exception=True)
+        res = OrderService.add_order(request.data)
+        obj = self.get_queryset().get(id=res.id)
+        res = self.get_serializer(obj)
+        return Response(res.data, 201)
+
+    @action(detail=True, methods=['POST'])
+    def cancel_order(self, request, pk=None, *args, **kwargs):
+        obj = self.get_object()
+        obj.status = Order.CANCELED
+        obj.save()
+        res = self.get_serializer(obj)
+        return Response(res.data, 200)
+
+    def dispatch(self, *args, **kwargs):
+        response = super().dispatch(*args, **kwargs)
+        print("Queries Counted: {}".format(len(connection.queries)))
+        return response
