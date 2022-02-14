@@ -3,6 +3,19 @@ from .models import *
 from accounts.serializers import BasicUserInfoSerializer
 
 
+class ChekcBusyListOrderSerializer(serializers.Serializer):
+    barber = serializers.IntegerField()
+    date = serializers.DateField()
+
+class BusyListOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = (
+            'id',
+            'start_datetime',
+            'end_datetime'
+        )
+
 class HairStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model = HairStyle

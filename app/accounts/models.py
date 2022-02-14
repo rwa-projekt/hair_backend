@@ -1,6 +1,8 @@
 from django.db import models
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError
+from django.db.models.functions import Concat
+from django.db.models import Value
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group, Permission
 
@@ -39,8 +41,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True, default=None, unique=True)
-    groups = models.ManyToManyField(Group, blank=True)
-    permissions = models.ManyToManyField(Permission, blank=True)
+    role = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True, default=None)
     is_active = models.BooleanField(default=True)
 
 
@@ -52,8 +53,15 @@ class Account(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
+    def has_perm(self, perm: str):
+        if self.is_superuser:
+            return True
+        permissions = set()
+        perms = self.role.permissions.annotate(perm=Concat('content_type__app_label', Value('.'), 'codename')).values('perm')
+        for p in perms:
+            permissions.add(p['perm'])
+        print(permissions)
+        return perm in permissions
 
     def has_module_perms(self, app_label):
         return True

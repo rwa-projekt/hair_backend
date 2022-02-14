@@ -1,5 +1,8 @@
 from datetime import time, timedelta, datetime
 import json
+from django.db import transaction
+
+from common.services import DataAbstract
 from .models import *
 from django.shortcuts import get_object_or_404
 from .serializers import *
@@ -43,6 +46,7 @@ class OrderService:
         pass
 
     @classmethod
+    @transaction.atomic
     def add_order(self, data):
         obj = Order.objects.create(
             start_datetime=data['start_datetime'],

@@ -9,10 +9,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 
-
 from .models import *
 from .serializers import *
 from .services import *
+from .selectors import *
 
 
 class CustomModelViewSet(viewsets.ModelViewSet):
@@ -83,6 +83,13 @@ class OrderViewSet(
         obj.save()
         res = self.get_serializer(obj)
         return Response(res.data, 200)
+
+    @action(detail=False, methods=['GET'])
+    def busy(self, request, *args, **kwargs):
+        check_ser = ChekcBusyListOrderSerializer(data=request.GET)
+        check_ser.is_valid(raise_exception=True)
+        res = get_busy_list_orders(check_ser.validated_data['barber'], check_ser.validated_data['date'])
+        return Response(res, 200)
 
     def dispatch(self, *args, **kwargs):
         response = super().dispatch(*args, **kwargs)
