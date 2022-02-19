@@ -63,6 +63,8 @@ class OrderViewSet(
     permission_classes = (IsAuthenticated, )
 
     # def list(self, request, *args, **kwargs):
+    #     if 'status' in request.GET:
+
     #     objs = self.get_queryset().filter(**request.GET.dict())
     #     ser = self.get_serializer(objs, many=True)
     #     print(request.GET.dict())
@@ -90,6 +92,12 @@ class OrderViewSet(
         check_ser.is_valid(raise_exception=True)
         res = get_busy_list_orders(check_ser.validated_data['barber'], check_ser.validated_data['date'])
         return Response(res, 200)
+
+    @action(detail=False, methods=['GET'])
+    def my(self, request, *args, **kwargs):
+        objs = self.get_queryset().filter(client_id=2).order_by('-start_datetime')
+        ser = self.get_serializer(objs, many=True)
+        return Response(ser.data, 200)
 
     def dispatch(self, *args, **kwargs):
         response = super().dispatch(*args, **kwargs)

@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.db import transaction
-
-
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from .models import Account
 from .serializers import *
 from .selector import *
@@ -58,6 +58,7 @@ class AccountViewSet(
     """
     queryset = Account.objects.filter(is_active=True).order_by('name')
     serializer_class = BasicUserSerializer
+    permission_classes = (IsAuthenticated, )
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -78,3 +79,8 @@ class AccountViewSet(
             }
 
         return Response(data, 200)
+
+    @action(detail=False, methods=['GET'])
+    def barbers(self, request, *args, **kwargs):
+        res = get_barbers()
+        return Response(res, 200)
