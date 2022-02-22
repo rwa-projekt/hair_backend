@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Account
 from .serializers import *
 from .selector import *
+from .permissions import *
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -58,7 +59,7 @@ class AccountViewSet(
     """
     queryset = Account.objects.filter(is_active=True).order_by('name')
     serializer_class = BasicUserSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (AccountPermission, )
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
