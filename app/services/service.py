@@ -5,7 +5,7 @@ from barber_booking.models import Order
 from datetime import datetime
 
 def check_active_orders():
-    print("Provjera proslih termina...")
+    # print("Provjera proslih termina...")
     obj = Order.objects.filter(end_datetime__lte=datetime.now(tz=timezone('cet'))).update(status=Order.FINISHED)
 
 def start():
