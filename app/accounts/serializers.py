@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Account
+from django.contrib.auth.models import Permission
+
 
 class BasicUserInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +12,7 @@ class BasicUserInfoSerializer(serializers.ModelSerializer):
             )
 
 class BasicUserSerializer(serializers.ModelSerializer):
+    # permissions = serializers.ListField(source='role.permissions')
     class Meta:
         model = Account
         fields = (
@@ -18,6 +21,7 @@ class BasicUserSerializer(serializers.ModelSerializer):
             'email', 
             'is_admin', 
             'phone_number',
+            'permissions'
             )
 
 class InsertUserSerializer(serializers.ModelSerializer):
@@ -29,3 +33,8 @@ class InsertUserSerializer(serializers.ModelSerializer):
             'email',
             'phone_number',
         )
+
+# class PermissionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Permission
+#         fields = 

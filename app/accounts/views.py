@@ -67,7 +67,7 @@ class AccountViewSet(
             return Response({"message": "Password missing"}, 404)
         ser = InsertUserSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        ser.save()
+        ser.save(role_id=3)
         token, created = Token.objects.get_or_create(user_id=ser.data['id'])
         user = token.user
         user.set_password(request.data['password'])
@@ -84,4 +84,9 @@ class AccountViewSet(
     @action(detail=False, methods=['GET'])
     def barbers(self, request, *args, **kwargs):
         res = get_barbers()
+        return Response(res, 200)
+    
+    @action(detail=False, methods=['GET'])
+    def clients(self, request, *args, **kwargs):
+        res = get_clients()
         return Response(res, 200)

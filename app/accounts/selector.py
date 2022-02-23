@@ -20,3 +20,8 @@ def get_barbers():
     objs = Account.objects.filter(role_id=2, is_active=True)
     ser = BasicUserSerializer(objs, many=True)
     return ser.data
+
+def get_clients():
+    objs = Account.objects.filter(role_id=3, is_active=True)
+    ser = BasicUserSerializer(objs, many=True)
+    return ser.data

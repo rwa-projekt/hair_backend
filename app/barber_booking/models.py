@@ -17,10 +17,12 @@ class Order(models.Model):
 
     CANCELED = 'canceled'
     ACTIVE = 'active'
+    FINISHED = 'finished'
 
     STATUS_CHOICES = [
         (ACTIVE, 'Aktivna narudzba'),
-        (CANCELED, 'Otkazana narudzba')
+        (CANCELED, 'Otkazana narudzba'),
+        (FINISHED, 'Završena narudzba'),
     ]
 
     start_datetime = models.DateTimeField(blank=True, null=True, default=None)

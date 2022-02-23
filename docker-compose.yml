@@ -3,7 +3,7 @@ version: '2'
 services:
   web:
     build: ./app
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000 --noreload
     container_name: docker02_web
     volumes:
       - ./app/:/usr/src/app/

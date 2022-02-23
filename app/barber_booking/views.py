@@ -42,6 +42,10 @@ class HairStyleViewSet(CustomModelViewSet):
     queryset = HairStyle.objects.filter(is_active=True)
     serializer_class = HairStyleSerializer
 
+    def update(self, request, *args, **kwargs):
+        print("UPDATEEEE")
+        return super().update(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
         res = add_hair_style(request.data, request.FILES.getlist('files'))
         obj = self.get_queryset().get(id=res.id)
@@ -95,7 +99,7 @@ class OrderViewSet(
 
     @action(detail=False, methods=['GET'])
     def my(self, request, *args, **kwargs):
-        objs = self.get_queryset().filter(client_id=2).order_by('-start_datetime')
+        objs = self.get_queryset().filter(client_id=request.user)#.order_by('-start_datetime')
         ser = self.get_serializer(objs, many=True)
         return Response(ser.data, 200)
 

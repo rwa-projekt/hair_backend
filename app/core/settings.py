@@ -49,6 +49,8 @@ INSTALLED_APPS = [
 
     'drf_yasg',
 
+    'services.apps.ServicesConfig',
+
 ]
 
 REST_FRAMEWORK = {

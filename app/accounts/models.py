@@ -44,6 +44,11 @@ class Account(AbstractBaseUser):
     role = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True, default=None)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        permissions = [
+            ('view_client', 'Can View Client')
+        ]
+
 
     def __str__(self):
         return self.name
@@ -65,3 +70,10 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def permissions(self):
+        objs = Permission.objects.filter(group=self.role)
+        arr = []
+        for o in objs:
+            arr.append(o.codename)
+        return arr
